@@ -28,7 +28,7 @@ public class MyWorkManager  {
                 .build();
 
         uploadWorkRequest =
-                new PeriodicWorkRequest.Builder(UploadWorker.class, 1, TimeUnit.MINUTES) //cannot be below MIN_PERIODIC_INTERVAL_MILLIS (15 Minutes)
+                new PeriodicWorkRequest.Builder(UploadWorker.class, 30, TimeUnit.MINUTES) //cannot be below MIN_PERIODIC_INTERVAL_MILLIS (15 Minutes)
                         .addTag("upload")
                         .setInputData(new Data.Builder()
                                 .putString("mqtthost", "199.64.70.66") //"192.168.0.40")
