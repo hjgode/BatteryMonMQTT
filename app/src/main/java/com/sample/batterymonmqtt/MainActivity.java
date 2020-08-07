@@ -1,7 +1,12 @@
 package com.sample.batterymonmqtt;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.work.Configuration;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -19,18 +24,43 @@ public class MainActivity extends AppCompatActivity {
             "android.permission.ACCESS_FINE_LOCATION",
             "android.permission.RECEIVE_BOOT_COMPLETED",
             "android.permission.INTERNET",
-            "android.permission.ACCESS_NETWORK_STATE"};
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.WAKE_LOCK",
+            "android.permission.READ_PHONE_STATE"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestPerms();
+
+//        org.apache.log4j.BasicConfigurator.configure();
+
         registerReceivers(context);
         Log.v(TAG, "ssid= "+GetSSID.getSSID(context));
-        BatteryInfo.getLevel(context);
+        BatteryInfo.getBattInfo(context);
         if(WifiReceiver.isConnected(context))
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
+
+        startWorker(context);
+    }
+
+    void startWorker(final Context context){
+        Log.d(TAG, "startWorker()");
+        MyWorkManager myWorkManager=new MyWorkManager(context);
+        WorkManager.getInstance(context).getWorkInfoByIdLiveData(myWorkManager.uploadWorkRequest.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(@Nullable WorkInfo workInfo) {
+                        if (workInfo != null ){
+                            Log.d(TAG, "WorkManager state="+workInfo.getState());
+//                            if(workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+//                                displayMessage("Work finished!");
+//                            }
+                        }
+                    }
+                });
     }
 
     void registerReceivers(Context context){
