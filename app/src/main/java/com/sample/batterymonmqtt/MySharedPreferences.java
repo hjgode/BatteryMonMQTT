@@ -6,16 +6,21 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class MySharedPreferences {
     Context _context=null;
     SharedPreferences sharedPreferences=null;
     String mqtt_host="192.168.0.40";
     String mqtt_interval="30";
     int mqttInterval=30;
+    private String sharedPrefFile = "com.sample.batterymonmqtt";
 
     public MySharedPreferences(Context context){
         _context=context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences=context.getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+
         mqtt_host=getHost();
         mqttInterval=getMqqttInterval();
     }

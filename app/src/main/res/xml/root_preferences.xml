@@ -5,12 +5,14 @@
         <EditTextPreference
             app:key="mqtthost"
             app:title="@string/mqtthost_title"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            app:defaultValue="192.168.0.40"/>
 
         <EditTextPreference
             app:key="mqtt_interval"
             app:title="MQTT update interval"
             app:useSimpleSummaryProvider="true"
+            app:defaultValue="30"
             />
     </PreferenceCategory>
 

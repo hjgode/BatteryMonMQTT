@@ -34,6 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat implements
             SharedPreferences.OnSharedPreferenceChangeListener {
         static String TAG="SettingsFragment";
+        private String sharedPrefFile = "com.sample.batterymonmqtt";
+        private SharedPreferences mPreferences;
 
         @Override
         public void onResume(){
@@ -49,7 +51,8 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             Log.d(TAG, "SettingsFragment onCreatePreferences");
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+            //mPreferences = getPreferenceScreen().getSharedPreferences();
+            mPreferences=this.getActivity().getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("use_key_from_editTextPreference_in_xml_file");
             editTextPreference.setOnBindEditTextListener(new androidx.preference.EditTextPreference.OnBindEditTextListener() {
@@ -73,13 +76,17 @@ public class SettingsActivity extends AppCompatActivity {
             Preference preference = findPreference(key);
 
             if (preference != null) {
-
                 if (!(preference instanceof CheckBoxPreference)) {
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     Log.i(TAG, "changed key/value: " + key+"/"+value);
                 }
-            }
+                if(key=="mqtt_host"){
+                    sharedPreferences.edit().putString("mqtt_host", sharedPreferences.getString(preference.getKey(), "192.168.0.40"));
+                }else if(key=="mqtt_interval"){
+                    sharedPreferences.edit().putString("mqtt_interval", sharedPreferences.getString(preference.getKey(), "30"));
 
+                }
+                }
         }
 
     }
