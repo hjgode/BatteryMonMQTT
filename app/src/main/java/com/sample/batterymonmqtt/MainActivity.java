@@ -9,10 +9,15 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +49,40 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
         startWorker(context);
+    }
+
+    /**
+     * Inflates the menu, and adds items to the action bar if it is present.
+     *
+     * @param menu Menu to inflate.
+     * @return Returns true if the menu inflated.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    /**
+     * Handles app bar item clicks.
+     *
+     * @param item Item clicked.
+     * @return True if one of the defined items was clicked.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings_menuitem:
+                Intent settingsIntent = new Intent(this,
+                        SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            default:
+                // Do nothing
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     void startWorker(final Context context){
