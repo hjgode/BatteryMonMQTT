@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+/**
+ * needs ACCESS_FINE_LOCATION. BAH
+ */
 public class GetSSID {
     public static String getSSID(Context context){
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

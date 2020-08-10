@@ -1,9 +1,9 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="@string/mqtt_header">
 
         <EditTextPreference
-            app:key="mqtthost"
+            app:key="mqtt_host"
             app:title="@string/mqtthost_title"
             app:useSimpleSummaryProvider="true"
             app:defaultValue="192.168.0.40"/>

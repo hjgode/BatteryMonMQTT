@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.preference.PreferenceManager;
 import androidx.work.Configuration;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -11,6 +12,7 @@ import androidx.work.WorkManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     public final static String TAG="BytteryMonMQTT";
     public static WifiReceiver wifiReceiver=new WifiReceiver();
     Context context=this;
+    MyWorkManager myWorkManager=null;
+    private static MainActivity instance;
+
     String[] perms=new String[]{
             "android.permission.ACCESS_WIFI_STATE",
             "android.permission.ACCESS_FINE_LOCATION",
@@ -38,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance=this;
         requestPerms();
+
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+        Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
 
 //        org.apache.log4j.BasicConfigurator.configure();
 
@@ -49,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
         startWorker(context);
+    }
+
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     /**
@@ -85,24 +98,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void startWorker(final Context context){
+    public void startWorker(final Context context){
         Log.d(TAG, "startWorker()");
-//        MyJobScheduler myJobScheduler=new MyJobScheduler(context);
-//        myJobScheduler.startJob();
 
-        MyWorkManager myWorkManager=new MyWorkManager(context);
-        WorkManager.getInstance(context).getWorkInfoByIdLiveData(myWorkManager.uploadWorkRequest.getId())
-                .observe(this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(@Nullable WorkInfo workInfo) {
-                        if (workInfo != null ){
-                            Log.d(TAG, "WorkManager state="+workInfo.getState());
-//                            if(workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-//                                displayMessage("Work finished!");
-//                            }
-                        }
-                    }
-                });
+        if(myWorkManager==null)
+            myWorkManager=new MyWorkManager(context);
+        myWorkManager.clearAllRequests();
+        myWorkManager.startRequests();
+//        WorkManager.getInstance(context).getWorkInfoByIdLiveData(myWorkManager.uploadWorkRequest.getId())
+//                .observe(this, new Observer<WorkInfo>() {
+//                    @Override
+//                    public void onChanged(@Nullable WorkInfo workInfo) {
+//                        if (workInfo != null ){
+//                            Log.d(TAG, "WorkManager state="+workInfo.getState());
+////                            if(workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+////                                displayMessage("Work finished!");
+////                            }
+//                        }
+//                    }
+//                });
     }
 
     void registerReceivers(Context context){

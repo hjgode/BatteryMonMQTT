@@ -29,32 +29,33 @@ public class UploadWorker extends Worker {
             @NonNull WorkerParameters params) {
         super(context, params);
         _context=context;
-        notificationManager = (NotificationManager)
-                context.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public ListenableWorker.Result doWork() {
-        String mqtthost = getInputData().getString("mqtthost");
 
         // Do the work here--in this case, upload the images.
         //uploadImages();
         setForegroundAsync(createForegroundInfo("MQTT BatteryMon running"));
-        PublishBatteryLevel(_context, mqtthost);
+        PublishBatteryLevel(_context);
         // Indicate whether the work finished successfully with the Result
 
         return ListenableWorker.Result.success();
     }
 
-    public int PublishBatteryLevel(Context context, String host){
+    public int PublishBatteryLevel(Context context){
         int res= 0;
         BatteryInfo.BattInfo batinfo = BatteryInfo.getBattInfo(context);
+        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+        String host=mySharedPreferences.getHost();
+        Log.d(MainActivity.TAG,"UploadWorker::PublishBatteryLevel "+ batinfo.ToString()+" to "+ host);
         if(mqttPublisher==null) {
-            mqttPublisher = new MQTTPublisher(host);
+            mqttPublisher = new MQTTPublisher();
         }
         mqttPublisher.doPublish(context, batinfo, host);
 
-        Log.d(MainActivity.TAG,"published battery ="+ batinfo.ToString());
+
         return res;
     }
 

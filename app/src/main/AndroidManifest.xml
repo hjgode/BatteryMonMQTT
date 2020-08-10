@@ -42,9 +42,7 @@
         </receiver>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
-        <service android:name=".MyJobService"
-            android:label="MQTT_Battery"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
     </application>
 
 </manifest>

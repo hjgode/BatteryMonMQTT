@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 /***
  * this is called on evry boot
  * BUT, the app needs to be run one time manually by the user
@@ -21,6 +23,9 @@ public class StartupBootReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Log.d(TAG, "StartUpBootReceiver BOOT_COMPLETED");
             //...
+            MainActivity mainActivity= MainActivity.getInstance();
+            if(mainActivity!=null)
+                mainActivity.startWorker(context);
         }
     }
 

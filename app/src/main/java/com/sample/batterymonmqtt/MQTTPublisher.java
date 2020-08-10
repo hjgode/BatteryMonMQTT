@@ -19,9 +19,8 @@ import java.time.format.DateTimeFormatter;
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MQTTPublisher {
-    String host="192.168.0.40"; //needs to be completed to tcp://...
-    public MQTTPublisher(String Host){
-        host=Host;
+
+    public MQTTPublisher(){
     }
 
     void doPublish(Context context, final BatteryInfo.BattInfo battInfo, final String myhost){
@@ -31,6 +30,8 @@ public class MQTTPublisher {
 
         String clientId = MqttClient.generateClientId();
         MqttAndroidClient client=new MqttAndroidClient(context, "tcp://"+myhost, clientId);
+        String devicemodel= Build.DEVICE + Build.ID;
+        Log.d(TAG,"publish to android/batteries/"+devicemodel);
         try {
             MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
             mqttConnectOptions.setConnectionTimeout(30);
@@ -42,57 +43,61 @@ public class MQTTPublisher {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "mqtt connected");
+                    Log.d(TAG, "mqtt connected to "+myhost);
                     MqttMessage message=new MqttMessage(sLevel.getBytes());
-                    message.setQos(2);
-                    message.setRetained(true);
+                    message.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
+                    message.setRetained(true); //message will no be available at the broker all the time
                     try {
-                        client.publish("android/batteries/"+android.os.Build.MODEL+"/level", message).setActionCallback(new IMqttActionListener() {
-                            @Override
-                            public void onSuccess(IMqttToken asyncActionToken) {
-                                Log.d(TAG, "client.publish success");
-                            }
-
-                            @Override
-                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                                Log.d(TAG, "client.publish failed: "+ exception.getMessage());
-                            }
-                        });
+                        client.publish("android/batteries/"+devicemodel+"/level", message);
+//                        client.publish("android/batteries/"+devicemodel+"/level", message).setActionCallback(new IMqttActionListener() {
+//                            @Override
+//                            public void onSuccess(IMqttToken asyncActionToken) {
+//                                Log.d(TAG, "client.publish success: "+asyncActionToken.toString());
+//                            }
+//
+//                            @Override
+//                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+//                                Log.d(TAG, "client.publish failed:  "+asyncActionToken.toString() +", "+ exception.getMessage());
+//                            }
+//                        });
                         message.setPayload(sCharging.getBytes());
-                        client.publish("android/batteries/"+android.os.Build.MODEL+"/status", message).setActionCallback(new IMqttActionListener() {
-                            @Override
-                            public void onSuccess(IMqttToken asyncActionToken) {
-                                Log.d(TAG, "client.publish success");
-                            }
-
-                            @Override
-                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                                Log.d(TAG, "client.publish failed: "+ exception.getMessage());
-                            }
-                        });
+                        client.publish("android/batteries/"+devicemodel+"/status", message);
+//                        client.publish("android/batteries/"+devicemodel+"/status", message).setActionCallback(new IMqttActionListener() {
+//                            @Override
+//                            public void onSuccess(IMqttToken asyncActionToken) {
+//                                Log.d(TAG, "client.publish success "+asyncActionToken.toString());
+//                            }
+//
+//                            @Override
+//                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+//                                Log.d(TAG, "client.publish failed:  "+asyncActionToken.toString()+", "+ exception.getMessage());
+//                            }
+//                        });
                         message.setPayload(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).getBytes());
-                        client.publish("android/batteries/"+android.os.Build.MODEL+"/datetime", message).setActionCallback(new IMqttActionListener() {
-                            @Override
-                            public void onSuccess(IMqttToken asyncActionToken) {
-                                Log.d(TAG, "client.publish success");
-                            }
+                        client.publish("android/batteries/"+devicemodel+"/datetime", message);
+//                        client.publish("android/batteries/"+devicemodel+"/datetime", message).setActionCallback(new IMqttActionListener() {
+//                            @Override
+//                            public void onSuccess(IMqttToken asyncActionToken) {
+//                                Log.d(TAG, "client.publish success "+asyncActionToken.toString());
+//                            }
+//
+//                            @Override
+//                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+//                                Log.d(TAG, "client.publish failed:  "+asyncActionToken.toString()+", "+ exception.getMessage());
+//                            }
+//                        });
 
-                            @Override
-                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                                Log.d(TAG, "client.publish failed: "+ exception.getMessage());
-                            }
-                        });
-
+                        Log.d(TAG, "publish done...");
                         if(client!=null){
                             client.disconnect().setActionCallback(new IMqttActionListener() {
                                 @Override
                                 public void onSuccess(IMqttToken asyncActionToken) {
-                                    Log.d(TAG, "mqtt disconnected");
+                                    Log.d(TAG, "mqtt disconnected from "+myhost);
                                 }
 
                                 @Override
                                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                                    Log.d(TAG, "mqtt disconnect failed");
+                                    Log.d(TAG, "mqtt disconnect failed "+myhost);
                                 }
                             });
                         }

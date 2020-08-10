@@ -51,8 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             Log.d(TAG, "SettingsFragment onCreatePreferences");
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            //mPreferences = getPreferenceScreen().getSharedPreferences();
-            mPreferences=this.getActivity().getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+            mPreferences = getPreferenceScreen().getSharedPreferences();
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("use_key_from_editTextPreference_in_xml_file");
 //            editTextPreference.setOnBindEditTextListener(new androidx.preference.EditTextPreference.OnBindEditTextListener() {
