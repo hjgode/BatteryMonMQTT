@@ -8,12 +8,15 @@
             app:useSimpleSummaryProvider="true"
             app:defaultValue="192.168.0.40"/>
 
-        <EditTextPreference
+        <ListPreference
             app:key="mqtt_interval"
             app:title="MQTT update interval"
             app:useSimpleSummaryProvider="true"
             app:defaultValue="30"
+            app:entries="@array/interval"
+            app:entryValues="@array/interval_values"
             />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -55,13 +55,13 @@ public class SettingsActivity extends AppCompatActivity {
             mPreferences=this.getActivity().getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("use_key_from_editTextPreference_in_xml_file");
-            editTextPreference.setOnBindEditTextListener(new androidx.preference.EditTextPreference.OnBindEditTextListener() {
-                @Override
-                public void onBindEditText(@NonNull EditText editText) {
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-
-                }
-            });
+//            editTextPreference.setOnBindEditTextListener(new androidx.preference.EditTextPreference.OnBindEditTextListener() {
+//                @Override
+//                public void onBindEditText(@NonNull EditText editText) {
+//                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+//
+//                }
+//            });
         }
 
         public static SettingsFragment newInstance() {

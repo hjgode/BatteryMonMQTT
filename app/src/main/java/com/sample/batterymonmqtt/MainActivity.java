@@ -87,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
     void startWorker(final Context context){
         Log.d(TAG, "startWorker()");
+//        MyJobScheduler myJobScheduler=new MyJobScheduler(context);
+//        myJobScheduler.startJob();
+
         MyWorkManager myWorkManager=new MyWorkManager(context);
         WorkManager.getInstance(context).getWorkInfoByIdLiveData(myWorkManager.uploadWorkRequest.getId())
                 .observe(this, new Observer<WorkInfo>() {
