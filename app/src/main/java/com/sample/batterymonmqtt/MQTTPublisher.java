@@ -44,10 +44,12 @@ public class MQTTPublisher {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "mqtt connected to "+myhost);
-                    MqttMessage message=new MqttMessage(sLevel.getBytes());
-                    message.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
-                    message.setRetained(true); //message will no be available at the broker all the time
                     try {
+                        MqttMessage message=new MqttMessage();
+                        message.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
+                        message.setRetained(true); //message will no be available at the broker all the time
+                        message.setPayload(sLevel.getBytes());
+                        Log.d(TAG, "###publish level="+sLevel);
                         client.publish("android/batteries/"+devicemodel+"/level", message);
 //                        client.publish("android/batteries/"+devicemodel+"/level", message).setActionCallback(new IMqttActionListener() {
 //                            @Override
@@ -60,8 +62,11 @@ public class MQTTPublisher {
 //                                Log.d(TAG, "client.publish failed:  "+asyncActionToken.toString() +", "+ exception.getMessage());
 //                            }
 //                        });
-                        message.setPayload(sCharging.getBytes());
-                        client.publish("android/batteries/"+devicemodel+"/status", message);
+                        MqttMessage messageStatus=new MqttMessage();
+                        messageStatus.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
+                        messageStatus.setRetained(true); //message will no be available at the broker all the time
+                        messageStatus.setPayload(sCharging.getBytes());
+                        client.publish("android/batteries/"+devicemodel+"/status", messageStatus);
 //                        client.publish("android/batteries/"+devicemodel+"/status", message).setActionCallback(new IMqttActionListener() {
 //                            @Override
 //                            public void onSuccess(IMqttToken asyncActionToken) {
@@ -73,8 +78,11 @@ public class MQTTPublisher {
 //                                Log.d(TAG, "client.publish failed:  "+asyncActionToken.toString()+", "+ exception.getMessage());
 //                            }
 //                        });
-                        message.setPayload(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).getBytes());
-                        client.publish("android/batteries/"+devicemodel+"/datetime", message);
+                        MqttMessage messageTime=new MqttMessage();
+                        messageTime.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
+                        messageTime.setRetained(true); //message will no be available at the broker all the time
+                        messageTime.setPayload(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).getBytes());
+                        client.publish("android/batteries/"+devicemodel+"/datetime", messageTime);
 //                        client.publish("android/batteries/"+devicemodel+"/datetime", message).setActionCallback(new IMqttActionListener() {
 //                            @Override
 //                            public void onSuccess(IMqttToken asyncActionToken) {
