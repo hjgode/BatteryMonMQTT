@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String TAG="BytteryMonMQTT";
     public static WifiReceiver wifiReceiver=new WifiReceiver();
     Context context=this;
-    MyWorkManager myWorkManager=null;
+//    MyWorkManager myWorkManager=null;
     private static MainActivity instance;
     TextView logtext;
     UpdateReceiver updateReceiver=new UpdateReceiver();
@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         if(WifiReceiver.isConnected(context))
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
-
+        MQTTPublisher mqttPublisher=new MQTTPublisher();
+        mqttPublisher.doPublish(context, BatteryInfo.getBattInfo(context), new MySharedPreferences(context).getHost(), new MySharedPreferences(context).getPort());
         startWorker(context);
     }
 
