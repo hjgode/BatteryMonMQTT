@@ -3,16 +3,22 @@
     <PreferenceCategory app:title="@string/mqtt_header">
 
         <EditTextPreference
-            app:key="mqtt_host"
+            app:defaultValue="192.168.0.40"
+            app:key="@string/mqtt_host"
             app:title="@string/mqtthost_title"
-            app:useSimpleSummaryProvider="true"
-            app:defaultValue="192.168.0.40"/>
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:defaultValue="1883"
+            app:key="@string/mqtt_port"
+            app:title="@string/mqttport_title"
+            app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:key="mqtt_interval"
+            app:key="@string/mqtt_interval"
             app:title="MQTT update interval"
             app:useSimpleSummaryProvider="true"
-            app:defaultValue="30"
+            app:defaultValue="@string/mqtt_default_interval"
             app:entries="@array/interval"
             app:entryValues="@array/interval_values"
             />

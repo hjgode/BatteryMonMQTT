@@ -49,14 +49,17 @@ public class MyWorkManager  {
     public void startRequests(){
         MySharedPreferences mySharedPreferences=new MySharedPreferences(_context);
         String host=mySharedPreferences.getHost();
+        String port=mySharedPreferences.getPort();
         String ints=mySharedPreferences.getMqqttInterval()+"";
         int intv=mySharedPreferences.getMqqttInterval();
 
         stopRequests();
 
+        UpdateReceiver.sendMessage(_context, "startRequests with "+host+":"+port+", interval="+ints);
+
         Log.d(TAG, "uploadRequest starting with interval="+intv+", host="+host);
         uploadWorkRequest =
-                new PeriodicWorkRequest.Builder(UploadWorker.class, intv, TimeUnit.MINUTES) //cannot be below MIN_PERIODIC_INTERVAL_MILLIS (15 Minutes)
+                new PeriodicWorkRequest.Builder(UploadWorker.class, intv, TimeUnit.MINUTES, intv/2, TimeUnit.MINUTES) //cannot be below MIN_PERIODIC_INTERVAL_MILLIS (15 Minutes)
                         .addTag(MY_WORK_TAG)
 //                        .setInputData(new Data.Builder()
 //                                .putString("mqtthost", host) //"192.168.0.40")
@@ -68,7 +71,7 @@ public class MyWorkManager  {
                         //.ExistingPeriodicWorkPolicy.KEEP
                         .build();
 
-        WorkManager.getInstance(_context).enqueue(uploadWorkRequest);
+        WorkManager.getInstance(_context).enqueueUniquePeriodicWork(MY_WORK_TAG, ExistingPeriodicWorkPolicy.REPLACE, uploadWorkRequest);
         Log.d(TAG, "MyWorkManger enqueued Worker: "+uploadWorkRequest.getId());
                 WorkManager.getInstance(_context).getWorkInfoByIdLiveData(uploadWorkRequest.getId())
                 .observeForever(new Observer<WorkInfo>() {

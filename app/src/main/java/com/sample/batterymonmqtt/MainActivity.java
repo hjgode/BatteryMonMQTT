@@ -1,13 +1,8 @@
 package com.sample.batterymonmqtt;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
-import androidx.work.Configuration;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,11 +10,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     Context context=this;
     MyWorkManager myWorkManager=null;
     private static MainActivity instance;
+    TextView logtext;
+    UpdateReceiver updateReceiver=new UpdateReceiver();
 
     String[] perms=new String[]{
             "android.permission.ACCESS_WIFI_STATE",
@@ -43,23 +40,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        logtext=findViewById(R.id.logtext);
+        logtext.setMovementMethod(new ScrollingMovementMethod());
+
         instance=this;
         requestPerms();
 
+        registerUpdateReceiver(context);
+
         SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
         Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
-
+        UpdateReceiver.sendMessage(context, sharedPreferences.getAll().toString());
 //        org.apache.log4j.BasicConfigurator.configure();
 
-        registerReceivers(context);
+        registerWifiReceiver(context);
+
         Log.v(TAG, "ssid= "+GetSSID.getSSID(context));
         BatteryInfo.getBattInfo(context);
         if(WifiReceiver.isConnected(context))
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
+
         startWorker(context);
     }
 
+    public void updateUI(final String s){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                logtext.append(s+"\n");
+            }
+        });
+    }
     public static MainActivity getInstance() {
         return instance;
     }
@@ -100,11 +112,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void startWorker(final Context context){
         Log.d(TAG, "startWorker()");
+        UpdateReceiver.sendMessage(context, "starting Worker...");
+        MyJobScheduler.scheduleJob(context);
 
-        if(myWorkManager==null)
-            myWorkManager=new MyWorkManager(context);
-        myWorkManager.clearAllRequests();
-        myWorkManager.startRequests();
+        //####################################
+//        if(myWorkManager==null)
+//            myWorkManager=new MyWorkManager(context);
+//        myWorkManager.clearAllRequests();
+//        myWorkManager.startRequests();
+        //####################################
 //        WorkManager.getInstance(context).getWorkInfoByIdLiveData(myWorkManager.uploadWorkRequest.getId())
 //                .observe(this, new Observer<WorkInfo>() {
 //                    @Override
@@ -119,7 +135,13 @@ public class MainActivity extends AppCompatActivity {
 //                });
     }
 
-    void registerReceivers(Context context){
+    void registerUpdateReceiver(Context context){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(pref.ACTION_NAME);
+        context.registerReceiver(updateReceiver, intentFilter);
+    }
+
+    void registerWifiReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
         context.registerReceiver(wifiReceiver, intentFilter);

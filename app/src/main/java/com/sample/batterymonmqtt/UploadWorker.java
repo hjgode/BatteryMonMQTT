@@ -18,6 +18,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class UploadWorker extends Worker {
     Context _context;
@@ -38,7 +39,12 @@ public class UploadWorker extends Worker {
         // Do the work here--in this case, upload the images.
         //uploadImages();
         setForegroundAsync(createForegroundInfo("MQTT BatteryMon running"));
-        PublishBatteryLevel(_context);
+        try {
+            PublishBatteryLevel(_context);
+        }catch (Exception ex){
+            Log.e(TAG, "ListenableWorker:Exception with PublishBatteryLevel: "+ex.getMessage());
+            return ListenableWorker.Result.failure();
+        }
         // Indicate whether the work finished successfully with the Result
 
         return ListenableWorker.Result.success();
@@ -49,11 +55,13 @@ public class UploadWorker extends Worker {
         BatteryInfo.BattInfo batinfo = BatteryInfo.getBattInfo(context);
         MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
         String host=mySharedPreferences.getHost();
-        Log.d(MainActivity.TAG,"UploadWorker::PublishBatteryLevel "+ batinfo.ToString()+" to "+ host);
+        String port=mySharedPreferences.getPort();
+
+        Log.d(TAG,"UploadWorker::PublishBatteryLevel "+ batinfo.ToString()+" to "+ host);
         if(mqttPublisher==null) {
             mqttPublisher = new MQTTPublisher();
         }
-        mqttPublisher.doPublish(context, batinfo, host);
+        mqttPublisher.doPublish(context, batinfo, host, port);
 
 
         return res;

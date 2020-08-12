@@ -4,11 +4,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -25,10 +27,26 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
+
+        /*
+         * go back when action bar back is tapped
+         */
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    /*
+     * go back when action bar back is tapped
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements
@@ -79,13 +97,22 @@ public class SettingsActivity extends AppCompatActivity {
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     Log.i(TAG, "changed key/value: " + key+"/"+value);
                 }
-                if(key=="mqtt_host"){
-                    sharedPreferences.edit().putString("mqtt_host", sharedPreferences.getString(preference.getKey(), "192.168.0.40"));
-                }else if(key=="mqtt_interval"){
-                    sharedPreferences.edit().putString("mqtt_interval", sharedPreferences.getString(preference.getKey(), "30"));
+                if(key==pref.PREF_MQTT_HOST){
+                    sharedPreferences.edit().putString(pref.PREF_MQTT_HOST, sharedPreferences.getString(preference.getKey(), "192.168.0.40"));
+                }else if(key==pref.PREF_MQTT_INTERVAL){
+                    sharedPreferences.edit().putString(pref.PREF_MQTT_INTERVAL, sharedPreferences.getString(preference.getKey(), "30"));
+                }else if(key==pref.PREF_MQTT_PORT){
+                    sharedPreferences.edit().putString(pref.PREF_MQTT_PORT, sharedPreferences.getString(preference.getKey(), "1883"));
+                }
+                }
+        }
 
-                }
-                }
+        @Override
+        public void onDetach() {
+            super.onDetach();
+
+            //Do your process here!
+
         }
 
     }

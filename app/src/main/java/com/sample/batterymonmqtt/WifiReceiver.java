@@ -47,4 +47,16 @@ public class WifiReceiver extends BroadcastReceiver {
         String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
         return ipAddress;
     }
+
+    static String macaddress="n/a";
+    public static String getMac(Context context){
+        String address=macaddress;
+        if(macaddress=="n/a") {
+            WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = manager.getConnectionInfo();
+            address = info.getMacAddress();
+            macaddress = address;
+        }
+        return address;
+    }
 }

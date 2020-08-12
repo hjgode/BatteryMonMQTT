@@ -6,8 +6,15 @@
     <string name="mqtt_header">MQTT Settings</string>
     <string name="sync_header">Sync</string>
 
+    <!-- key names -->
+    <string name="mqtt_host">mqtt_host</string>
+    <string name="mqtt_interval">mqtt_interval</string>
+    <string name="mqtt_port">mqtt_port</string>
+
     <string name="mqtthost_title">The MQTT host</string>
+    <string name="mqttport_title">The MQTT port</string>
     <string name="mqtt_default_host">192.168.0.40</string>
+    <string name="mqtt_default_port">1883</string>
     <string name="mqtt_default_interval">30</string>
 
 
