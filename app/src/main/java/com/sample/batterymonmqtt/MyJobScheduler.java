@@ -25,7 +25,8 @@ public class MyJobScheduler {
         long max=mySharedPreferences.mqttInterval;
 
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(1234, serviceComponent); //do not use id=0 here
+        //infos: https://debruyn.dev/2018/tips-for-developing-android-jobscheduler-jobs/
         builder.setPeriodic(max *60*1000, max/2 *60*1000);
 //        builder.setMinimumLatency((max/2) * 60 * 1000); // wait at least seconds, min 15 minutes
 //        builder.setOverrideDeadline(max * 60 * 1000); // maximum delay seconds, max 30 minutes
