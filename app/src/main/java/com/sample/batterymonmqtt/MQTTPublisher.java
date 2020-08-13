@@ -28,8 +28,8 @@ public class MQTTPublisher {
     MqttMessage getMessage(String payload){
         MqttMessage message=new MqttMessage();
         byte[] payloadB=payload.getBytes();
-//        message.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
-//        message.setRetained(true); //message will no be available at the broker all the time
+        message.setQos(0); //0=do not wait for ACK, 1=repeat sending DUP messages until ACK once, 2=send and wait for ACK
+        message.setRetained(true); //message will no be available at the broker all the time
         message.setPayload(payloadB);
         return message;
     }

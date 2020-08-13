@@ -6,6 +6,7 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import static com.sample.batterymonmqtt.MainActivity.TAG;
@@ -29,8 +30,14 @@ public class MyJobScheduler {
 //        builder.setMinimumLatency((max/2) * 60 * 1000); // wait at least seconds, min 15 minutes
 //        builder.setOverrideDeadline(max * 60 * 1000); // maximum delay seconds, max 30 minutes
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-        //builder.setRequiresDeviceIdle(true); // device should be idle
         builder.setRequiresCharging(false); // we don't care if the device is charging or not
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setRequiresBatteryNotLow(false); //don't care
+            builder.setRequiresStorageNotLow(false); //don't care
+        }
+        builder.setPersisted(false); //we use a BOOT receiver to schedule
+        builder.setRequiresCharging(false); //don't care
+        builder.setRequiresDeviceIdle(false); //don't care
         JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
 
         jobScheduler.cancelAll();
