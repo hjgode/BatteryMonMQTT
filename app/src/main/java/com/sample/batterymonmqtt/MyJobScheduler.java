@@ -12,7 +12,7 @@ import android.util.Log;
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MyJobScheduler {
-    final int MY_JOB_ID=1883;
+    final static int JOB_ID=1883;
 
     public MyJobScheduler(Context context){
 
@@ -25,7 +25,7 @@ public class MyJobScheduler {
         long max=mySharedPreferences.mqttInterval;
 
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(1234, serviceComponent); //do not use id=0 here
+        JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, serviceComponent); //do not use id=0 here, wil cancel jobs with same ID
         //infos: https://debruyn.dev/2018/tips-for-developing-android-jobscheduler-jobs/
         builder.setPeriodic(max *60*1000, max/2 *60*1000);
 //        builder.setMinimumLatency((max/2) * 60 * 1000); // wait at least seconds, min 15 minutes
@@ -36,14 +36,23 @@ public class MyJobScheduler {
             builder.setRequiresBatteryNotLow(false); //don't care
             builder.setRequiresStorageNotLow(false); //don't care
         }
-        builder.setPersisted(false); //we use a BOOT receiver to schedule
+
+        builder.setPersisted(true); //we use a BOOT receiver to schedule
         builder.setRequiresCharging(false); //don't care
         builder.setRequiresDeviceIdle(false); //don't care
+
         JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
-
-        jobScheduler.cancelAll();
-
-        int res = jobScheduler.schedule(builder.build());   //1=success, 0=failure
-        Log.d(TAG, "jobSchedule result="+res);
+        JobInfo pendingJob = jobScheduler.getPendingJob(JOB_ID);
+        if (pendingJob == null)
+        {
+//        jobScheduler.cancelAll();
+            int res = jobScheduler.schedule(builder.build());   //1=success, 0=failure
+            Log.d(TAG, "new jobSchedule result="+res);
+        }
+        else {
+            // maybe verify the job settings here
+            Log.d(TAG, "already pending jobs: "+pendingJob.getIntervalMillis()*1000+"seconds interval");
+        }
+        Log.d(TAG, "scheduleJob ended");
     }
 }

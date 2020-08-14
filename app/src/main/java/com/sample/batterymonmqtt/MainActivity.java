@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
         Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
+        
         UpdateReceiver.sendMessage(context, sharedPreferences.getAll().toString());
 //        org.apache.log4j.BasicConfigurator.configure();
 
