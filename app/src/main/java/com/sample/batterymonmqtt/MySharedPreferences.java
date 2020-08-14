@@ -47,6 +47,11 @@ public class MySharedPreferences {
         mainActivity.startWorker(_context);
     }
 
+    @Override
+    public String toString(){
+        String s="mqtt_host="+mqtt_host+", mqtt_port="+mqtt_port+", mqtt_interval="+mqtt_interval;
+        return  s;
+    }
     public void saveAll(){
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(pref.PREF_MQTT_HOST, mqtt_host);

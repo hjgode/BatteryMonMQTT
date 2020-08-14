@@ -61,10 +61,6 @@ public class MyWorkManager  {
         uploadWorkRequest =
                 new PeriodicWorkRequest.Builder(UploadWorker.class, intv, TimeUnit.MINUTES, intv/2, TimeUnit.MINUTES) //cannot be below MIN_PERIODIC_INTERVAL_MILLIS (15 Minutes)
                         .addTag(MY_WORK_TAG)
-//                        .setInputData(new Data.Builder()
-//                                .putString("mqtthost", host) //"192.168.0.40")
-//                                .build()
-//                        )
 
                         // Constraints
                         .setConstraints(constraints)

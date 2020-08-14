@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
     TextView logtext;
     UpdateReceiver updateReceiver=new UpdateReceiver();
+    MQTTPublisher mqttPublisher;
 
     String[] perms=new String[]{
             "android.permission.ACCESS_WIFI_STATE",
@@ -48,10 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
         registerUpdateReceiver(context);
 
-        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
-        Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
-        
-        UpdateReceiver.sendMessage(context, sharedPreferences.getAll().toString());
+//        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+//        Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
+
+        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+        Log.d(TAG,"PREFS: "+mySharedPreferences.toString());
+
+        UpdateReceiver.sendMessage(context, mySharedPreferences.toString());
 //        org.apache.log4j.BasicConfigurator.configure();
 
         registerWifiReceiver(context);
@@ -61,11 +65,24 @@ public class MainActivity extends AppCompatActivity {
         if(WifiReceiver.isConnected(context))
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
-        MQTTPublisher mqttPublisher=new MQTTPublisher();
+        mqttPublisher=new MQTTPublisher();
         mqttPublisher.doPublish(context, BatteryInfo.getBattInfo(context), new MySharedPreferences(context).getHost(), new MySharedPreferences(context).getPort());
         startWorker(context);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        registerWifiReceiver(context);
+        registerUpdateReceiver(context);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        unregisterReceiver(wifiReceiver);
+        unregisterReceiver(updateReceiver);
+    }
     public void updateUI(final String s){
         runOnUiThread(new Runnable() {
             @Override
@@ -114,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void startWorker(final Context context){
         Log.d(TAG, "startWorker()");
+        if(mqttPublisher!=null)
+            mqttPublisher.stopPublish();
+
         UpdateReceiver.sendMessage(context, "starting Worker...");
         MyJobScheduler.scheduleJob(context);
 

@@ -1,5 +1,6 @@
 package com.sample.batterymonmqtt;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
@@ -18,6 +19,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 public class SettingsActivity extends AppCompatActivity {
+    Context context=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,9 +112,8 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onDetach() {
             super.onDetach();
-
             //Do your process here!
-
+            MainActivity.getInstance().startWorker(getContext());
         }
 
     }

@@ -22,6 +22,8 @@ import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MQTTPublisher {
 
+    MqttAndroidClient client;
+
     public MQTTPublisher(){
     }
 
@@ -34,6 +36,21 @@ public class MQTTPublisher {
         return message;
     }
 
+    public void stopPublish()  {
+        if(client!=null){
+            try {
+                client.disconnect();
+                client.unregisterResources();
+                client.close();
+                client=null;
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }catch (Exception e){
+
+            }
+        }
+    }
+
     void doPublish(Context context, final BatteryInfo.BattInfo battInfo, final String myhost, final String port){
         Log.d(TAG, "doPublish()..., host="+myhost);
         final String sLevel=Integer.toString(battInfo.level);
@@ -42,7 +59,8 @@ public class MQTTPublisher {
         String clientId = MqttClient.generateClientId();
         try {
 //            MqttClient client=new MqttClient("tcp://"+myhost+":"+port, clientId);
-            MqttAndroidClient client=new MqttAndroidClient(context, "tcp://"+myhost+":"+port, clientId);
+//            MqttAndroidClient
+            client=new MqttAndroidClient(context, "tcp://"+myhost+":"+port, clientId);
             String devicemodel= Build.DEVICE + "-" + WifiReceiver.getMac(context);
             Log.d(TAG,"publish to android/batteries/"+devicemodel);
             MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
