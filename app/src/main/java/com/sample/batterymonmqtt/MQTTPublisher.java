@@ -71,6 +71,7 @@ public class MQTTPublisher {
             mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 //            client.connect(); //NO ASYNC calls
             IMqttToken token=client.connect(mqttConnectOptions);
+
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -95,8 +96,6 @@ public class MQTTPublisher {
                         UpdateReceiver.sendMessage(context, "android/batteries/"+devicemodel);
                         UpdateReceiver.sendMessage(context, battInfo.ToString());
 
-                        client.unregisterResources();
-                        client.close();
 //                        client.disconnect();
                         if(client!=null){
                             client.disconnect().setActionCallback(new IMqttActionListener() {
@@ -121,6 +120,8 @@ public class MQTTPublisher {
                     Log.d(TAG, "mqtt connect failed: "+exception.getMessage());
                 }
             });
+            client.unregisterResources();
+            client.close();
         } catch (MqttException e) {
             Log.e(TAG, "doPublish: "+e.getMessage());
         }

@@ -26,9 +26,9 @@ public class MyJobService extends JobService {
                 MQTTPublisher mqttPublisher=new MQTTPublisher();
                 MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
                 mqttPublisher.doPublish(context, battInfo, mySharedPreferences.mqtt_host, mySharedPreferences.getPort());
-                jobThread.start(); //call when onStartJob returns true (runs in background) to signal job finished!
             }
         });
+        jobThread.start(); //call when onStartJob returns true (runs in background) to signal job finished!
         jobFinished(params, false);
 
         //        Intent service = new Intent(getApplicationContext(), LocalMqttService.class);
