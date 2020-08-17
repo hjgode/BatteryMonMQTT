@@ -87,7 +87,10 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                logtext.append(s+"\n");
+                if(s=="CLEAR")
+                    logtext.setText("");
+                else
+                    logtext.append(s+"\n");
             }
         });
     }

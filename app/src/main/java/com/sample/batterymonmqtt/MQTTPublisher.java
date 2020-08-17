@@ -23,6 +23,7 @@ import static com.sample.batterymonmqtt.MainActivity.TAG;
 public class MQTTPublisher {
 
     MqttAndroidClient client;
+    final static String clientId = MqttClient.generateClientId();
 
     public MQTTPublisher(){
     }
@@ -56,11 +57,12 @@ public class MQTTPublisher {
         final String sLevel=Integer.toString(battInfo.level);
         final String sCharging=(battInfo.charging?"charging":"discharging");
 
-        String clientId = MqttClient.generateClientId();
+
         try {
 //            MqttClient client=new MqttClient("tcp://"+myhost+":"+port, clientId);
 //            MqttAndroidClient
-            client=new MqttAndroidClient(context, "tcp://"+myhost+":"+port, clientId);
+            if(client==null)
+                client=new MqttAndroidClient(context, "tcp://"+myhost+":"+port, clientId);
             String devicemodel= Build.DEVICE + "-" + WifiReceiver.getMac(context);
             Log.d(TAG,"publish to android/batteries/"+devicemodel);
             MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
@@ -70,58 +72,68 @@ public class MQTTPublisher {
 //            mqttConnectOptions.setServerURIs(new String[]{"tcp://"+myhost+":"+port});
             mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 //            client.connect(); //NO ASYNC calls
-            IMqttToken token=client.connect(mqttConnectOptions);
+            if(client!=null && !client.isConnected()){
+                Log.d(TAG, "client is not connected. New connect()...");
+                IMqttToken token=client.connect(mqttConnectOptions);
+                token.setActionCallback(new IMqttActionListener() {
+                    @Override
+                    public void onSuccess(IMqttToken asyncActionToken) {
+                        Log.d(TAG, "mqtt connected to "+myhost);
+                            MqttMessage message=getMessage(sLevel);
+                        UpdateReceiver.sendMessage(context, "CLEAR");
+                        UpdateReceiver.sendMessage(context, "mqtt connected to "+myhost);
+                        try {
+                            client.publish("android/batteries/"+devicemodel+"/level", message);
+                            message=getMessage(sCharging);
+                            client.publish("android/batteries/"+devicemodel+"/status", message);
+                            @SuppressLint({"NewApi", "LocalSuppress"}) String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+                            message=getMessage(timestamp);
 
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "mqtt connected to "+myhost);
-                        MqttMessage message=getMessage(sLevel);
+                            client.publish("android/batteries/"+devicemodel+"/datetime", message);
+                            //do the JSON stuff
+                            message=getMessage(MyJSON.getJSON(battInfo));
+                            client.publish("android/batteries/"+devicemodel, message);
 
-                    try {
-                        client.publish("android/batteries/"+devicemodel+"/level", message);
-                        message=getMessage(sCharging);
-                        client.publish("android/batteries/"+devicemodel+"/status", message);
-                        @SuppressLint({"NewApi", "LocalSuppress"}) String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-                        message=getMessage(timestamp);
+                            Log.d(TAG, "publish done...");
+                            UpdateReceiver.sendMessage(context,timestamp);
+                            UpdateReceiver.sendMessage(context, "publish done to tcp://"+myhost+":"+port);
+                            UpdateReceiver.sendMessage(context, "android/batteries/"+devicemodel);
+                            UpdateReceiver.sendMessage(context, battInfo.ToString());
 
-                        client.publish("android/batteries/"+devicemodel+"/datetime", message);
-                        //do the JSON stuff
-                        message=getMessage(MyJSON.getJSON(battInfo));
-                        client.publish("android/batteries/"+devicemodel, message);
-
-                        Log.d(TAG, "publish done...");
-                        UpdateReceiver.sendMessage(context,timestamp);
-                        UpdateReceiver.sendMessage(context, "publish done to tcp://"+myhost+":"+port);
-                        UpdateReceiver.sendMessage(context, "android/batteries/"+devicemodel);
-                        UpdateReceiver.sendMessage(context, battInfo.ToString());
-
-//                        client.disconnect();
-                        if(client!=null){
-                            client.disconnect().setActionCallback(new IMqttActionListener() {
-                                @Override
-                                public void onSuccess(IMqttToken asyncActionToken) {
-                                    Log.d(TAG, "mqtt disconnected from "+myhost);
-                                }
-
-                                @Override
-                                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                                    Log.d(TAG, "mqtt disconnect failed "+myhost);
-                                }
-                            });
+    //                        client.unregisterResources();
+    //                        client.close();
+    //                        client.disconnect();
+    //                        if(client!=null){
+    //                            client.disconnect().setActionCallback(new IMqttActionListener() {
+    //                                @Override
+    //                                public void onSuccess(IMqttToken asyncActionToken) {
+    //                                    Log.d(TAG, "mqtt disconnected from "+myhost);
+    //                                }
+    //
+    //                                @Override
+    //                                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+    //                                    Log.d(TAG, "mqtt disconnect failed "+myhost);
+    //                                }
+    //                            });
+    //                        }
+                        } catch (MqttException e) {
+                            e.printStackTrace();
                         }
-                    } catch (MqttException e) {
-                        e.printStackTrace();
                     }
-                }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "mqtt connect failed: "+exception.getMessage());
-                }
-            });
-            client.unregisterResources();
-            client.close();
+                    @Override
+                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                        Log.d(TAG, "mqtt connect failed: "+exception.getMessage());
+                    }
+                });
+            }else{ //if client && !client.isConnected
+                Log.d(TAG, "client already connected");
+                //already connected
+                //do the JSON stuff
+                MqttMessage message=getMessage(MyJSON.getJSON(battInfo));
+                client.publish("android/batteries/"+devicemodel, message);
+                Log.d(TAG, "JOSN publish done...");
+            }
         } catch (MqttException e) {
             Log.e(TAG, "doPublish: "+e.getMessage());
         }
