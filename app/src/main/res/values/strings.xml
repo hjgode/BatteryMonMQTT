@@ -10,12 +10,15 @@
     <string name="mqtt_host">mqtt_host</string>
     <string name="mqtt_interval">mqtt_interval</string>
     <string name="mqtt_port">mqtt_port</string>
+    <string name="mqtt_topic">mqtt_topic</string>
 
     <string name="mqtthost_title">The MQTT host</string>
     <string name="mqttport_title">The MQTT port</string>
+    <string name="mqtttopic_title">The MQTT topic to use</string>
     <string name="mqtt_default_host">192.168.0.40</string>
     <string name="mqtt_default_port">1883</string>
     <string name="mqtt_default_interval">30</string>
+    <string name="mqtt_default_topic">geraet1</string>
 
 
 </resources>

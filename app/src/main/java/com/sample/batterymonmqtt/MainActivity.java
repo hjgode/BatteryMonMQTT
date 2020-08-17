@@ -66,7 +66,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
         mqttPublisher=new MQTTPublisher();
-        mqttPublisher.doPublish(context, BatteryInfo.getBattInfo(context), new MySharedPreferences(context).getHost(), new MySharedPreferences(context).getPort());
+        mqttPublisher.doPublish(context,
+                BatteryInfo.getBattInfo(context),
+                new MySharedPreferences(context).getHost(),
+                new MySharedPreferences(context).getPort(),
+                new MySharedPreferences(context).getTopic()
+        );
         startWorker(context);
     }
 

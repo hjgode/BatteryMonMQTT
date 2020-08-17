@@ -2,11 +2,11 @@ package com.sample.batterymonmqtt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MySharedPreferences {
@@ -15,18 +15,25 @@ public class MySharedPreferences {
     String mqtt_host="192.168.0.40";
     String mqtt_port="1883";
     String mqtt_interval="30";
+    String mqtt_topic ="geraet1";
 
     int mqttInterval=30;
     int mqttport=1883;
 
     public MySharedPreferences(Context context){
         _context=context;
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         //read all values or defaults
         mqtt_host=getHost();
         mqttInterval=getMqqttInterval();
         mqtt_port=getPort();
+        mqtt_topic=getTopic();
+        if(mqtt_topic.equals("geraet1")) {
+            mqtt_topic = Build.DEVICE;
+            saveTopic(mqtt_topic);
+        }
 
         saveAll();
 
@@ -42,6 +49,8 @@ public class MySharedPreferences {
             mqtt_interval = getMqqttInterval() + "";
         else if (key == pref.PREF_MQTT_PORT)
             mqtt_interval = getPort() + "";
+        else if (key == pref.PREF_MQTT_TOPIC)
+            mqtt_interval = getTopic() ;
 
         MainActivity mainActivity=MainActivity.getInstance();
         mainActivity.startWorker(_context);
@@ -49,7 +58,7 @@ public class MySharedPreferences {
 
     @Override
     public String toString(){
-        String s="mqtt_host="+mqtt_host+", mqtt_port="+mqtt_port+", mqtt_interval="+mqtt_interval;
+        String s="mqtt_host="+mqtt_host+", mqtt_port="+mqtt_port+", mqtt_interval="+mqtt_interval+", topic="+mqtt_topic;
         return  s;
     }
     public void saveAll(){
@@ -57,6 +66,7 @@ public class MySharedPreferences {
         editor.putString(pref.PREF_MQTT_HOST, mqtt_host);
         editor.putString(pref.PREF_MQTT_PORT, mqtt_port);
         editor.putString(pref.PREF_MQTT_INTERVAL, mqtt_interval);
+        editor.putString(pref.PREF_MQTT_TOPIC, mqtt_topic);
         editor.apply();
     }
     public void saveHost(String h){
@@ -73,8 +83,19 @@ public class MySharedPreferences {
 
     public void saveInterval(int v){
         mqtt_interval=v+"";
-        sharedPreferences.edit().putString("mqtt_interval", mqtt_interval);
+        sharedPreferences.edit().putString(pref.PREF_MQTT_INTERVAL, mqtt_interval);
         sharedPreferences.edit().apply();
+    }
+
+    public void saveTopic(String v){
+        mqtt_topic=v;
+        sharedPreferences.edit().putString(pref.PREF_MQTT_TOPIC, mqtt_topic);
+        sharedPreferences.edit().apply();
+    }
+
+    public String getTopic(){
+        String h=sharedPreferences.getString(pref.PREF_MQTT_TOPIC, mqtt_topic);
+        return h;
     }
 
     public String getHost(){

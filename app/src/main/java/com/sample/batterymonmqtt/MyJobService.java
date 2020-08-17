@@ -25,7 +25,8 @@ public class MyJobService extends JobService {
                 BatteryInfo.BattInfo battInfo= BatteryInfo.getBattInfo(context);
                 MQTTPublisher mqttPublisher=new MQTTPublisher();
                 MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-                mqttPublisher.doPublish(context, battInfo, mySharedPreferences.mqtt_host, mySharedPreferences.getPort());
+                mqttPublisher.doPublish(context, battInfo, mySharedPreferences.mqtt_host, mySharedPreferences.getPort(),
+                        mySharedPreferences.getTopic());
             }
         });
         jobThread.start(); //call when onStartJob returns true (runs in background) to signal job finished!

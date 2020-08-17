@@ -3,16 +3,17 @@
     <PreferenceCategory app:title="@string/mqtt_header">
 
         <EditTextPreference
-            app:defaultValue="192.168.0.40"
+            app:defaultValue="@string/mqtt_default_host"
             app:key="@string/mqtt_host"
             app:title="@string/mqtthost_title"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:defaultValue="1883"
+            app:defaultValue="@string/mqtt_default_port"
             app:key="@string/mqtt_port"
             app:title="@string/mqttport_title"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            />
 
         <ListPreference
             app:key="@string/mqtt_interval"
@@ -21,6 +22,14 @@
             app:defaultValue="@string/mqtt_default_interval"
             app:entries="@array/interval"
             app:entryValues="@array/interval_values"
+            />
+
+        <EditTextPreference
+            app:defaultValue="@string/mqtt_default_topic"
+            app:key="@string/mqtt_topic"
+            app:title="@string/mqtttopic_title"
+            app:useSimpleSummaryProvider="true"
+            app:summary="Will extend to android/batteries/topic"
             />
 
     </PreferenceCategory>

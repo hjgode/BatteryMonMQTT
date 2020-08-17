@@ -52,18 +52,18 @@ public class MQTTPublisher {
         }
     }
 
-    void doPublish(Context context, final BatteryInfo.BattInfo battInfo, final String myhost, final String port){
+    void doPublish(Context context, final BatteryInfo.BattInfo battInfo, final String myhost, final String port, final String topic){
         Log.d(TAG, "doPublish()..., host="+myhost);
         final String sLevel=Integer.toString(battInfo.level);
         final String sCharging=(battInfo.charging?"charging":"discharging");
-
+        String devicemodel= topic; //Build.DEVICE + "-" + WifiReceiver.getMac(context);
 
         try {
 //            MqttClient client=new MqttClient("tcp://"+myhost+":"+port, clientId);
 //            MqttAndroidClient
             if(client==null)
                 client=new MqttAndroidClient(context, "tcp://"+myhost+":"+port, clientId);
-            String devicemodel= Build.DEVICE + "-" + WifiReceiver.getMac(context);
+
             Log.d(TAG,"publish to android/batteries/"+devicemodel);
             MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
             mqttConnectOptions.setConnectionTimeout(10);

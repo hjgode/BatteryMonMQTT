@@ -61,7 +61,7 @@ public class UploadWorker extends Worker {
         if(mqttPublisher==null) {
             mqttPublisher = new MQTTPublisher();
         }
-        mqttPublisher.doPublish(context, batinfo, host, port);
+        mqttPublisher.doPublish(context, batinfo, host, port, new MySharedPreferences(context).getTopic());
 
 
         return res;

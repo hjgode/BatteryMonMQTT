@@ -2,6 +2,7 @@ package com.sample.batterymonmqtt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -73,7 +74,11 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             mPreferences = getPreferenceScreen().getSharedPreferences();
             PreferenceScreen preferenceScreen = getPreferenceScreen();
-            androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("use_key_from_editTextPreference_in_xml_file");
+            androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("mqtt_topic");
+            if(editTextPreference!=null){
+                if(editTextPreference.getText().equals("geraet1"))
+                    editTextPreference.setText(Build.DEVICE);
+            }
 //            editTextPreference.setOnBindEditTextListener(new androidx.preference.EditTextPreference.OnBindEditTextListener() {
 //                @Override
 //                public void onBindEditText(@NonNull EditText editText) {
