@@ -15,8 +15,11 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
@@ -86,7 +89,9 @@ public class MQTTPublisher {
 //                            client.publish("android/batteries/"+devicemodel+"/level", message);
 //                            message=getMessage(sCharging);
 //                            client.publish("android/batteries/"+devicemodel+"/status", message);
-                              String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+                            String timestamp = sdf.format(new Date());
+                              //String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
 //                            message=getMessage(timestamp);
 //
 //                            client.publish("android/batteries/"+devicemodel+"/datetime", message);
