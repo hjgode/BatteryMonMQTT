@@ -47,15 +47,21 @@ public class MyJobScheduler {
 
         JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
         JobInfo pendingJob = jobScheduler.getPendingJob(JOB_ID);
+        int res=0;
         if (pendingJob == null)
         {
 //        jobScheduler.cancelAll();
-            int res = jobScheduler.schedule(builder.build());   //1=success, 0=failure
+            res = jobScheduler.schedule(builder.build());   //1=success, 0=failure
             Log.d(TAG, "new jobSchedule result="+res);
         }
         else {
             // maybe verify the job settings here
             Log.d(TAG, "already pending jobs: "+pendingJob.getIntervalMillis()*1000+"seconds interval");
+            if(pendingJob.getIntervalMillis()!=interval *60*1000){
+                jobScheduler.cancelAll();
+                res=jobScheduler.schedule(builder.build());
+                Log.d(TAG, "new jobSchedule with different interval result="+res);
+            }
         }
         Log.d(TAG, "scheduleJob ended");
     }

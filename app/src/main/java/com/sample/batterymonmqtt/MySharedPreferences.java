@@ -14,7 +14,7 @@ public class MySharedPreferences {
     SharedPreferences sharedPreferences=null;
     String mqtt_host="192.168.0.40";
     String mqtt_port="1883";
-    String mqtt_interval="30";
+    String mqtt_interval="15";
     String mqtt_topic ="geraet1";
 
     int mqttInterval=15;

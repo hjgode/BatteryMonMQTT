@@ -3,9 +3,9 @@
 
     <PreferenceCategory app:title="@string/mqtt_header">
         <SwitchPreference
-            app:defaultValue="true"
-            app:key="mqtt_enabled"
-            app:title="Enable MQTT"
+            app:defaultValue="@string/mqtt_default_enabled"
+            app:key="@string/mqtt_default_enabled"
+            app:title="@string/mqttenable_title"
             app:useSimpleSummaryProvider="true"
             />
 

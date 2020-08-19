@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BatteryMonMQTT</string>
+    <string name="app_name">BatteryMonMQTT v1.0</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preferences MQTT  -->
@@ -11,14 +11,17 @@
     <string name="mqtt_interval">mqtt_interval</string>
     <string name="mqtt_port">mqtt_port</string>
     <string name="mqtt_topic">mqtt_topic</string>
+    <string name="mqtt_enbled">mqtt_enabled</string>
 
     <string name="mqtthost_title">The MQTT host</string>
     <string name="mqttport_title">The MQTT port</string>
     <string name="mqtttopic_title">The MQTT topic to use</string>
+    <string name="mqttenable_title">Enable MQTT publishing</string>
+
     <string name="mqtt_default_host">192.168.0.40</string>
     <string name="mqtt_default_port">1883</string>
     <string name="mqtt_default_interval">15</string>
     <string name="mqtt_default_topic">geraet1</string>
-
+    <string name="mqtt_default_enabled">true</string>
 
 </resources>
