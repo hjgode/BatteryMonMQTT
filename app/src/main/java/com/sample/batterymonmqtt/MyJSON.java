@@ -6,8 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
@@ -21,7 +24,9 @@ public class MyJSON {
     public static String getJSON(BatteryInfo.BattInfo battInfo){
         Log.d(TAG, "getJSON for  "+ battInfo.toString());
         String jsonString="";
-        String timestamp= LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy_HH:mm"));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+        String timestamp = sdf.format(new Date());
+        //String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
         JSONObject jsonObject=new JSONObject();
         try {
             jsonObject.put("level", battInfo.level);
