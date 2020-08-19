@@ -17,8 +17,9 @@ public class MySharedPreferences {
     String mqtt_interval="30";
     String mqtt_topic ="geraet1";
 
-    int mqttInterval=30;
+    int mqttInterval=15;
     int mqttport=1883;
+    boolean mqtt_enabled=true;
 
     public MySharedPreferences(Context context){
         _context=context;
@@ -51,14 +52,21 @@ public class MySharedPreferences {
             mqtt_interval = getPort() + "";
         else if (key == pref.PREF_MQTT_TOPIC)
             mqtt_interval = getTopic() ;
+        else  if (key == pref.PREF_MQTT_ENABLED)
+            mqtt_enabled = getEnabled() ;
 
         MainActivity mainActivity=MainActivity.getInstance();
         mainActivity.startWorker(_context);
     }
 
+    private boolean getEnabled() {
+        boolean h=sharedPreferences.getBoolean(pref.PREF_MQTT_ENABLED, mqtt_enabled);
+        return h;
+    }
+
     @Override
     public String toString(){
-        String s="mqtt_host="+mqtt_host+", mqtt_port="+mqtt_port+", mqtt_interval="+mqtt_interval+", topic="+mqtt_topic;
+        String s="mqtt_enabled="+mqtt_enabled+ ", mqtt_host="+mqtt_host+", mqtt_port="+mqtt_port+", mqtt_interval="+mqtt_interval+", topic="+mqtt_topic;
         return  s;
     }
     public void saveAll(){
@@ -67,6 +75,7 @@ public class MySharedPreferences {
         editor.putString(pref.PREF_MQTT_PORT, mqtt_port);
         editor.putString(pref.PREF_MQTT_INTERVAL, mqtt_interval);
         editor.putString(pref.PREF_MQTT_TOPIC, mqtt_topic);
+        editor.putBoolean(pref.PREF_MQTT_ENABLED, mqtt_enabled);
         editor.apply();
     }
     public void saveHost(String h){
@@ -90,6 +99,12 @@ public class MySharedPreferences {
     public void saveTopic(String v){
         mqtt_topic=v;
         sharedPreferences.edit().putString(pref.PREF_MQTT_TOPIC, mqtt_topic);
+        sharedPreferences.edit().apply();
+    }
+
+    public void saveEnabled(boolean v){
+        mqtt_enabled=v;
+        sharedPreferences.edit().putBoolean(pref.PREF_MQTT_TOPIC, mqtt_enabled);
         sharedPreferences.edit().apply();
     }
 

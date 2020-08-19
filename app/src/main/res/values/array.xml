@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="interval">
+        <item>0.25 h</item>
         <item>0.5 h</item>
         <item>1 h</item>
         <item>2 h</item>
@@ -10,6 +11,7 @@
         <item>12 h</item>
     </string-array>
     <string-array name="interval_values">
+        <item>15</item>
         <item>30</item>
         <item>60</item>
         <item>120</item>

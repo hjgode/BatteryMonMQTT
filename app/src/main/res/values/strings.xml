@@ -17,7 +17,7 @@
     <string name="mqtttopic_title">The MQTT topic to use</string>
     <string name="mqtt_default_host">192.168.0.40</string>
     <string name="mqtt_default_port">1883</string>
-    <string name="mqtt_default_interval">30</string>
+    <string name="mqtt_default_interval">15</string>
     <string name="mqtt_default_topic">geraet1</string>
 
 

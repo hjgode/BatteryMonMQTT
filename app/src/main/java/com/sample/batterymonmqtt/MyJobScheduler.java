@@ -22,16 +22,16 @@ public class MyJobScheduler {
     public static void scheduleJob(Context context) {
         Log.d(TAG, "scheduleJob...");
         MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-        long max=mySharedPreferences.mqttInterval;
+        long interval=mySharedPreferences.mqttInterval;
         //TODO: remove after test
-        max=15;
+        //interval=15;
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, serviceComponent); //do not use id=0 here, wil cancel jobs with same ID
         //infos: https://debruyn.dev/2018/tips-for-developing-android-jobscheduler-jobs/
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            builder.setPeriodic(max*60*1000);
+            builder.setPeriodic(interval*60*1000);
         else
-            builder.setPeriodic(max *60*1000, 5 *60*1000);
+            builder.setPeriodic(interval *60*1000, 5 *60*1000);
 //        builder.setMinimumLatency((max/2) * 60 * 1000); // wait at least seconds, min 15 minutes
 //        builder.setOverrideDeadline(max * 60 * 1000); // maximum delay seconds, max 30 minutes
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network

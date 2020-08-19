@@ -107,11 +107,16 @@ public class SettingsActivity extends AppCompatActivity {
                 if(key==pref.PREF_MQTT_HOST){
                     sharedPreferences.edit().putString(pref.PREF_MQTT_HOST, sharedPreferences.getString(preference.getKey(), "192.168.0.40"));
                 }else if(key==pref.PREF_MQTT_INTERVAL){
-                    sharedPreferences.edit().putString(pref.PREF_MQTT_INTERVAL, sharedPreferences.getString(preference.getKey(), "30"));
+                    sharedPreferences.edit().putString(pref.PREF_MQTT_INTERVAL, sharedPreferences.getString(preference.getKey(), "15"));
                 }else if(key==pref.PREF_MQTT_PORT){
                     sharedPreferences.edit().putString(pref.PREF_MQTT_PORT, sharedPreferences.getString(preference.getKey(), "1883"));
+                }else if(key==pref.PREF_MQTT_TOPIC){
+                    sharedPreferences.edit().putString(pref.PREF_MQTT_TOPIC, sharedPreferences.getString(preference.getKey(), "geraet1"));
+                }else if(key==pref.PREF_MQTT_ENABLED){
+                    sharedPreferences.edit().putBoolean(pref.PREF_MQTT_ENABLED, sharedPreferences.getBoolean(preference.getKey(),true));
                 }
-                }
+                sharedPreferences.edit().apply();
+            }
         }
 
         @Override

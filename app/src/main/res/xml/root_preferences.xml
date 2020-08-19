@@ -1,6 +1,13 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/mqtt_header">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="mqtt_enabled"
+            app:title="Enable MQTT"
+            app:useSimpleSummaryProvider="true"
+            />
 
         <EditTextPreference
             app:defaultValue="@string/mqtt_default_host"

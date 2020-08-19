@@ -83,13 +83,13 @@ public class MQTTPublisher {
                         UpdateReceiver.sendMessage(context, "CLEAR");
                         UpdateReceiver.sendMessage(context, "mqtt connected to "+myhost);
                         try {
-                            client.publish("android/batteries/"+devicemodel+"/level", message);
-                            message=getMessage(sCharging);
-                            client.publish("android/batteries/"+devicemodel+"/status", message);
-                            @SuppressLint({"NewApi", "LocalSuppress"}) String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-                            message=getMessage(timestamp);
-
-                            client.publish("android/batteries/"+devicemodel+"/datetime", message);
+//                            client.publish("android/batteries/"+devicemodel+"/level", message);
+//                            message=getMessage(sCharging);
+//                            client.publish("android/batteries/"+devicemodel+"/status", message);
+                              String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+//                            message=getMessage(timestamp);
+//
+//                            client.publish("android/batteries/"+devicemodel+"/datetime", message);
                             //do the JSON stuff
                             message=getMessage(MyJSON.getJSON(battInfo));
                             client.publish("android/batteries/"+devicemodel, message);
