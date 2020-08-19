@@ -18,6 +18,6 @@ I started the app thinking it can not be that hard to create a simple periodic u
 The other hard coding is due to Google's paranoia and the restrictions you will face writing a periodic background service. Especially starting with Android 8.
 
 You may download the 1.0 release with this QR code:
-![SDownload BatteryMonMQTT v1.0](https://github.com/hjgode/BatteryMonMQTT/blob/master/app/release/BatteryMonMqtt_10.apk?raw=true)
+![Download BatteryMonMQTT v1.0](https://github.com/hjgode/BatteryMonMQTT/raw/master/doc/barcode.png)
 
 Have fun
