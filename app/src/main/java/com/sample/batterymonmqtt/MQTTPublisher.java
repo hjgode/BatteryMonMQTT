@@ -55,6 +55,11 @@ public class MQTTPublisher {
         }
     }
 
+    void doPublish(Context context){
+        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+        doPublish(context, BatteryInfo.getBattInfo(context), mySharedPreferences.getHost(), mySharedPreferences.getPort(), mySharedPreferences.getTopic());
+    }
+
     void doPublish(Context context, final BatteryInfo.BattInfo battInfo, final String myhost, final String port, final String topic){
         Log.d(TAG, "doPublish()..., host="+myhost);
         final String sLevel=Integer.toString(battInfo.level);

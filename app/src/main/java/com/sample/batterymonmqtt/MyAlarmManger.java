@@ -10,7 +10,7 @@ public class MyAlarmManger {
     Context context=null;
     final int requestId=815;
     PendingIntent alarmIntent=null;
-    Intent intentAlarmReceiver = new Intent(context, MyAlarmReceiver.class);
+    Intent intentAlarmReceiver = null;
 
     static AlarmManager alarmManager=null;
 
@@ -18,9 +18,9 @@ public class MyAlarmManger {
         context= _context;
         if(alarmManager==null)
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
+        intentAlarmReceiver=new Intent(context, MyAlarmReceiver.class);
+        intentAlarmReceiver.setAction(pref.ACTION_ALARM);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intentAlarmReceiver, 0);
-
     }
 
     void scheduleWakeup(int interval){

@@ -145,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
         UpdateReceiver.sendMessage(context, "starting Worker...");
         MyJobScheduler.scheduleJob(context);
 
+        MyAlarmManger myAlarmManger=new MyAlarmManger(context);
+        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+        myAlarmManger.scheduleWakeup(mySharedPreferences.getMqqttInterval());
         //####################################
 //        if(myWorkManager==null)
 //            myWorkManager=new MyWorkManager(context);
