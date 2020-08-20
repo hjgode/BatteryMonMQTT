@@ -26,7 +26,7 @@ public class MyAlarmManger {
     void scheduleWakeup(int interval){
         //this needs to be rescheduled!
 //        alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, 1*60*1000, alarmIntent);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, interval*60*1000, alarmIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval*60*1000, alarmIntent);
 /*        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
                 interval*60*1000

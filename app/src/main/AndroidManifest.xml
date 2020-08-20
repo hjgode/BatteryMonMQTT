@@ -63,10 +63,20 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".MyAlarmReceiver"
             android:enabled="true"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="ALARM_ACTION"/>
+            </intent-filter>
         </receiver>
+        <service
+            android:name=".ForegroundService"
+            android:enabled="true"
+            android:exported="true">
+
+        </service>
     </application>
 
 </manifest>

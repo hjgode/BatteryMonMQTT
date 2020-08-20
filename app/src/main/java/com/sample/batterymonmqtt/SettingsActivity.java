@@ -100,6 +100,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference preference = findPreference(key);
 
             if (preference != null) {
+/*
                 if (!(preference instanceof CheckBoxPreference)) {
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     Log.i(TAG, "changed key/value: " + key+"/"+value);
@@ -116,6 +117,9 @@ public class SettingsActivity extends AppCompatActivity {
                     sharedPreferences.edit().putBoolean(pref.PREF_MQTT_ENABLED, sharedPreferences.getBoolean(preference.getKey(),true));
                 }
                 sharedPreferences.edit().apply();
+*/
+                MySharedPreferences mySharedPreferences=new MySharedPreferences(getContext());
+                MainActivity.getInstance().updateUI("onSharedPreferenceChanged: " + mySharedPreferences.toString());
             }
         }
 

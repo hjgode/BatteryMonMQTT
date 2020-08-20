@@ -74,14 +74,36 @@ public class MQTTPublisher {
 
             Log.d(TAG,"publish to android/batteries/"+devicemodel);
             MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
-            mqttConnectOptions.setConnectionTimeout(10);
+            mqttConnectOptions.setConnectionTimeout(10); //10 seconds
             mqttConnectOptions.setAutomaticReconnect(false);
             mqttConnectOptions.setCleanSession(true);
-//            mqttConnectOptions.setServerURIs(new String[]{"tcp://"+myhost+":"+port});
             mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 //            client.connect(); //NO ASYNC calls
             if(client!=null && !client.isConnected()){
                 Log.d(TAG, "client is not connected. New connect()...");
+                try {
+                    UpdateReceiver.sendMessage(context, "Mqtt connect (blocking)...");
+                    IMqttToken token = client.connect(mqttConnectOptions);
+                    MqttMessage message=getMessage(MyJSON.getJSON(battInfo));
+                    UpdateReceiver.sendMessage(context, "Mqtt publish JSON...");
+                    int maxTries=1, current=0;
+                    do{
+                        try {
+                            Thread.sleep(1000);
+                            current++;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }while (!token.isComplete() || current>maxTries);
+                    if(token.isComplete())
+                        client.publish("android/batteries/"+devicemodel, message);
+                    else
+                        Log.d(TAG, "connect failed");
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+
+/*              //async stuff not working in Background app
                 IMqttToken token=client.connect(mqttConnectOptions);
                 token.setActionCallback(new IMqttActionListener() {
                     @Override
@@ -136,7 +158,9 @@ public class MQTTPublisher {
                         Log.d(TAG, "mqtt connect failed: "+exception.getMessage());
                     }
                 });
-            }else{ //if client && !client.isConnected
+*/
+            }
+            else{ //if client && !client.isConnected
                 Log.d(TAG, "client already connected");
                 //already connected
                 //do the JSON stuff

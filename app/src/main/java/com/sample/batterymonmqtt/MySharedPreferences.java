@@ -118,6 +118,16 @@ public class MySharedPreferences {
         return h;
     }
 
+    public int getPortInt(){
+        String h=sharedPreferences.getString(pref.PREF_MQTT_PORT, "1883");
+        try {
+            mqttport = Integer.parseInt(h);
+        }catch (Exception ex){
+            Log.d(TAG, "SharedPreferneces, mqtt_port not a number?: "+ex.getMessage());
+        }
+        return mqttport;
+    }
+
     public String getPort(){
         String h=sharedPreferences.getString(pref.PREF_MQTT_PORT, "1883");
         try {

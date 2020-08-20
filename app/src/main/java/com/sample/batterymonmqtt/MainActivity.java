@@ -2,12 +2,12 @@ package com.sample.batterymonmqtt;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -15,10 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    public final static String TAG="BytteryMonMQTT";
+    public final static String TAG="BatteryMonMQTT";
     public static WifiReceiver wifiReceiver=new WifiReceiver();
     Context context=this;
 //    MyWorkManager myWorkManager=null;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TextView logtext;
     UpdateReceiver updateReceiver=new UpdateReceiver();
     MQTTPublisher mqttPublisher;
+     MyAlarmReceiver myAlarmReceiver = new MyAlarmReceiver();
 
     String[] perms=new String[]{
             "android.permission.ACCESS_WIFI_STATE",
@@ -65,14 +67,20 @@ public class MainActivity extends AppCompatActivity {
         if(WifiReceiver.isConnected(context))
             Log.d(TAG, "ip="+WifiReceiver.getIP(context));
 
-        mqttPublisher=new MQTTPublisher();
-        mqttPublisher.doPublish(context,
-                BatteryInfo.getBattInfo(context),
-                new MySharedPreferences(context).getHost(),
-                new MySharedPreferences(context).getPort(),
-                new MySharedPreferences(context).getTopic()
-        );
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+//                mqttPublisher=new MQTTPublisher();
+//                mqttPublisher.doPublish(context);
+                MqttPublisherHiveMQ mqttPublisherHiveMQ=new MqttPublisherHiveMQ(context);
+                mqttPublisherHiveMQ.doPublish();
+            }
+        };
+        runnable.run();
+
+//        registerAlarmReceiver();
         startWorker(context);
+//        setAlarmPendingIntent();
     }
 
     @Override
@@ -80,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerWifiReceiver(context);
         registerUpdateReceiver(context);
+        registerAlarmReceiver();
     }
 
     @Override
@@ -87,7 +96,38 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(wifiReceiver);
         unregisterReceiver(updateReceiver);
+        unregisterAlarmReceiver();
     }
+
+    private void setAlarmPendingIntent() {
+        Intent intent = new Intent(this, ForegroundService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+        Toast.makeText(this, "publish after every 15 minutes interval", Toast.LENGTH_LONG).show();
+    }
+
+
+    public boolean isAlarmBroadcastRegistered(Context context, String action, Class clazz) {
+        Intent intent = new Intent(action);
+        intent.setClass(context, clazz);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+    }
+
+    void unregisterAlarmReceiver(){
+        context.unregisterReceiver(myAlarmReceiver);
+    }
+    void registerAlarmReceiver(){
+        final IntentFilter intentFilter = new IntentFilter(pref.ACTION_ALARM);
+        context.registerReceiver(myAlarmReceiver, intentFilter);
+
+/*
+        //fire this to launch the receiver
+        Intent intent = new Intent(pref.ACTION_ALARM);
+        intent.setClass(this, MyAlarmReceiver.class);
+*/
+    }
+
     public void updateUI(final String s){
         runOnUiThread(new Runnable() {
             @Override
@@ -142,12 +182,14 @@ public class MainActivity extends AppCompatActivity {
         if(mqttPublisher!=null)
             mqttPublisher.stopPublish();
 
-        UpdateReceiver.sendMessage(context, "starting Worker...");
-        MyJobScheduler.scheduleJob(context);
+        UpdateReceiver.sendMessage(context, "starting Schedule...");
+
+        //MyJobScheduler.scheduleJob(context);
 
         MyAlarmManger myAlarmManger=new MyAlarmManger(context);
         MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
         myAlarmManger.scheduleWakeup(mySharedPreferences.getMqqttInterval());
+
         //####################################
 //        if(myWorkManager==null)
 //            myWorkManager=new MyWorkManager(context);
