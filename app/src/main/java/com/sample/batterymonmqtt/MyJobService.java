@@ -23,10 +23,10 @@ public class MyJobService extends JobService {
             public void run() {
                 Log.d(TAG, "LocalMqttService::publishBattInfo...");
                 BatteryInfo.BattInfo battInfo= BatteryInfo.getBattInfo(context);
-                MQTTPublisher mqttPublisher=new MQTTPublisher();
+                MqttPublisherHiveMQ mqttPublisher=new MqttPublisherHiveMQ(context);
                 MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
                 if(mySharedPreferences.mqtt_enabled) {
-                    mqttPublisher.doPublish(context, battInfo, mySharedPreferences.mqtt_host, mySharedPreferences.getPort(), mySharedPreferences.getTopic());
+                    mqttPublisher.doPublish();
                 }else{
                     Log.d(TAG,"MQTT publish is disabled");
                 }

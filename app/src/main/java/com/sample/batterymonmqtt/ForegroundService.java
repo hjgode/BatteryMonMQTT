@@ -78,7 +78,7 @@ public class ForegroundService extends Service {
 
     public static void startService(Context ctx) {
         Intent serviceIntent = new Intent(ctx, ForegroundService.class);
-        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+        serviceIntent.putExtra("inputExtra", "MQTT battery publisher");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ctx.startForegroundService(serviceIntent);
         }else {

@@ -28,6 +28,10 @@ public class MyAlarmReceiver extends BroadcastReceiver {
 //                }
 //            };
 //            runnable.run();
+            //schedule a new one
+            MyAlarmManger myAlarmManger=new MyAlarmManger(context);
+            MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+            myAlarmManger.scheduleWakeup(mySharedPreferences.getMqqttInterval());
         }
     }
 }

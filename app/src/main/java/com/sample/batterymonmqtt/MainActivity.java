@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hivemq.client.internal.logging.InternalLoggerFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     public final static String TAG="BatteryMonMQTT";
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
     TextView logtext;
     UpdateReceiver updateReceiver=new UpdateReceiver();
-    MQTTPublisher mqttPublisher;
+    MqttPublisherHiveMQ mqttPublisher;
      MyAlarmReceiver myAlarmReceiver = new MyAlarmReceiver();
 
     String[] perms=new String[]{
@@ -179,8 +181,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void startWorker(final Context context){
         Log.d(TAG, "startWorker()");
-        if(mqttPublisher!=null)
-            mqttPublisher.stopPublish();
 
         UpdateReceiver.sendMessage(context, "starting Schedule...");
 

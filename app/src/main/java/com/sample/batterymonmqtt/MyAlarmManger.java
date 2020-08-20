@@ -5,6 +5,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.util.Log;
+
+import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MyAlarmManger {
     Context context=null;
@@ -26,7 +29,15 @@ public class MyAlarmManger {
     void scheduleWakeup(int interval){
         //this needs to be rescheduled!
 //        alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, 1*60*1000, alarmIntent);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval*60*1000, alarmIntent);
+        Log.d(TAG, "scheduleWakeup:AlarmManager canceling Alarm and PendingIntent");
+        alarmManager.cancel(alarmIntent);
+        alarmIntent.cancel();
+        //long minutesFromNow = System.currentTimeMillis() + 60 * 1000*interval; //use, if you trust the clock will not change
+        //works for time since boot only:
+        long minutesFromNow =  SystemClock.elapsedRealtime() + 60 * 1000 * interval;
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, minutesFromNow, alarmIntent);
+        //alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, interval*60*1000, alarmIntent); //will set the alarm relative to the clock
+        Log.d(TAG, "scheduleWakeup:AlarmManager setAlarm to start in " + interval+" minutes");
 /*        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
                 interval*60*1000

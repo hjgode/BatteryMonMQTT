@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BatteryMonMQTT v1.0</string>
+    <string name="app_name">BatteryMonMQTT v1.1</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preferences MQTT  -->

@@ -3,11 +3,10 @@ package com.sample.batterymonmqtt;
 import android.content.Context;
 import android.util.Log;
 
+import com.hivemq.client.internal.logging.InternalLoggerFactory;
 import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
-
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.UUID;
 
@@ -17,11 +16,13 @@ public class MqttPublisherHiveMQ {
 
     MqttPublisherHiveMQ(Context context){
         _context=context;
+
     }
 
     public void doPublish(){
         Log.d(TAG, "doPublish()...");
         MySharedPreferences mySharedPreferences=new MySharedPreferences(_context);
+        UpdateReceiver.sendMessage(_context, "doPublish(): prefs="+mySharedPreferences.toString());
 
         Log.d(TAG, "doPublish()...build client...");
         Mqtt3AsyncClient client = MqttClient.builder()
@@ -36,6 +37,7 @@ public class MqttPublisherHiveMQ {
                     Log.d(TAG, "doPublish()...client,connect()...whenCompleted...");
                     if (throwable != null) {
                         // Handle connection failure
+                        UpdateReceiver.sendMessage(_context, "connect failed "+throwable.getMessage());
                         Log.d(TAG, "doPublish()...client,connect()...whenCompleted...ERROR: "+throwable.getMessage());
                     } else {
                         Log.d(TAG, "doPublish()...client,connect()...whenCompleted...success");
@@ -53,9 +55,12 @@ public class MqttPublisherHiveMQ {
                                     if (throwable1 != null) {
                                         // Handle failure to publish
                                         Log.d(TAG, "doPublish()...client,connect()...whenCompleted...success...publish()...ERROR: "+throwable1.getMessage());
+                                        UpdateReceiver.sendMessage(_context, "doPublish failed "+throwable1.getMessage());
                                     } else {
                                         // Handle successful publish, e.g. logging or incrementing a metric
-                                        Log.d(TAG, "doPublish()...client,connect()...whenCompleted...success...publish()...completed");            }
+                                        Log.d(TAG, "doPublish()...client,connect()...whenCompleted...success...publish()...completed");
+                                        UpdateReceiver.sendMessage(_context, "doPublish OK: "+ mySharedPreferences.toString() +"\n"+ payloadS);
+                                    }
                                 });
                     }
                 });
@@ -64,8 +69,10 @@ public class MqttPublisherHiveMQ {
                 .whenComplete((aVoid, throwable2) -> {
                     if(throwable2!=null){
                         Log.d(TAG, "doPublish()...disconnect()...ERROR: "+throwable2.getMessage());
+                        UpdateReceiver.sendMessage(_context, "disconnect() failed "+throwable2.getMessage());
                     }else{
                         Log.d(TAG, "doPublish()...disconnect()...success");
+                        UpdateReceiver.sendMessage(_context, "disconnect() OK");
                     }
                 });
         Log.d(TAG, "doPublish()...END");
