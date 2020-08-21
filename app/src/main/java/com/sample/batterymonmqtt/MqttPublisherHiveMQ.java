@@ -57,10 +57,12 @@ public class MqttPublisherHiveMQ {
                         // Setup subscribes or start publishing
                         String payloadS=MyJSON.getJSON(BatteryInfo.getBattInfo(_context));
                         byte[] payload=payloadS.getBytes();
+                        String topic="android/batteries/"+sharedPreferences.getString(pref.PREF_MQTT_TOPIC, _context.getResources().getString(R.string.mqtt_default_topic));
                         Log.d(TAG, "doPublish()...client,connect()...whenCompleted...success...publish()...");
+                        Log.d(TAG, "topic="+topic);
                         client.publishWith()
                                 //.topic("android/batteries/" + mySharedPreferences.getTopic())
-                                .topic(sharedPreferences.getString(pref.PREF_MQTT_TOPIC, _context.getResources().getString(R.string.mqtt_default_topic)))
+                                .topic(topic)
                                 .payload(payload)
                                 .qos(MqttQos.AT_MOST_ONCE)
                                 .retain(true)
