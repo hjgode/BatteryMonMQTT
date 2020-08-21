@@ -4,7 +4,10 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
@@ -24,8 +27,10 @@ public class MyJobService extends JobService {
                 Log.d(TAG, "LocalMqttService::publishBattInfo...");
                 BatteryInfo.BattInfo battInfo= BatteryInfo.getBattInfo(context);
                 MqttPublisherHiveMQ mqttPublisher=new MqttPublisherHiveMQ(context);
-                MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-                if(mySharedPreferences.mqtt_enabled) {
+//                MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+                SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+                if (sharedPreferences.getBoolean(pref.PREF_MQTT_ENABLED, true) ){
+//                if(mySharedPreferences.mqtt_enabled) {
                     mqttPublisher.doPublish();
                 }else{
                     Log.d(TAG,"MQTT publish is disabled");

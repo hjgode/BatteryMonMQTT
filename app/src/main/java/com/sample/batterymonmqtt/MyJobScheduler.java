@@ -6,8 +6,11 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
@@ -21,8 +24,15 @@ public class MyJobScheduler {
     // schedule the start of the service every 10 - 30 seconds
     public static void scheduleJob(Context context) {
         Log.d(TAG, "scheduleJob...");
-        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-        long interval=mySharedPreferences.mqttInterval;
+//        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+//        long interval=mySharedPreferences.mqttInterval;
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+        int interval;
+        try {
+            interval = Integer.parseInt(sharedPreferences.getString(pref.PREF_MQTT_INTERVAL, "15"));
+        }catch (Exception ex){
+            interval=15;
+        }
         //TODO: remove after test
         //interval=15;
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);

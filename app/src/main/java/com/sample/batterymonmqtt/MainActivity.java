@@ -2,12 +2,14 @@ package com.sample.batterymonmqtt;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -53,13 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
         registerUpdateReceiver(context);
 
-//        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
-//        Log.d(TAG,"PREFS: "+sharedPreferences.getAll().toString());
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+        Log.d(TAG,"PREFS: "+ MySharedPreferences.dumpPrefs(sharedPreferences));
 
-        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-        Log.d(TAG,"PREFS: "+mySharedPreferences.toString());
+//        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+//        Log.d(TAG,"PREFS: "+mySharedPreferences.toString());
 
-        UpdateReceiver.sendMessage(context, mySharedPreferences.toString());
+        UpdateReceiver.sendMessage(context, sharedPreferences.toString());
 //        org.apache.log4j.BasicConfigurator.configure();
 
         registerWifiReceiver(context);
@@ -187,8 +189,16 @@ public class MainActivity extends AppCompatActivity {
         //MyJobScheduler.scheduleJob(context);
 
         MyAlarmManger myAlarmManger=new MyAlarmManger(context);
-        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
-        myAlarmManger.scheduleWakeup(mySharedPreferences.getMqqttInterval());
+//        MySharedPreferences mySharedPreferences=new MySharedPreferences(context);
+//        myAlarmManger.scheduleWakeup(mySharedPreferences.getMqqttInterval());
+        SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
+        int interval;
+        try{
+            interval = Integer.parseInt(sharedPreferences.getString(pref.PREF_MQTT_INTERVAL, context.getResources().getString(R.string.mqtt_default_interval)));
+        }catch (Exception ex){
+            interval=15;
+        }
+        myAlarmManger.scheduleWakeup(interval);
 
         //####################################
 //        if(myWorkManager==null)

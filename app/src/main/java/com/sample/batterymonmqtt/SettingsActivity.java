@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -52,27 +53,54 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        if(hasFocus)
+            showSystemUI();
+    }
+
+    // Shows the system bars by removing all the flags
+// except for the ones that make the content appear under the system bars.
+    private void showSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                |View.SYSTEM_UI_FLAG_IMMERSIVE
+                        //| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        );
+    }
+
     public static class SettingsFragment extends PreferenceFragmentCompat implements
             SharedPreferences.OnSharedPreferenceChangeListener {
         static String TAG="SettingsFragment";
         private String sharedPrefFile = "com.sample.batterymonmqtt";
         private SharedPreferences mPreferences;
 
+
         @Override
         public void onResume(){
             super.onResume();
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }
+
         @Override
         public void onPause(){
             super.onPause();
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             Log.d(TAG, "SettingsFragment onCreatePreferences");
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             mPreferences = getPreferenceScreen().getSharedPreferences();
+
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             androidx.preference.EditTextPreference editTextPreference = getPreferenceManager().findPreference("mqtt_topic");
             if(editTextPreference!=null){
@@ -100,11 +128,12 @@ public class SettingsActivity extends AppCompatActivity {
             Preference preference = findPreference(key);
 
             if (preference != null) {
-/*
+
                 if (!(preference instanceof CheckBoxPreference)) {
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     Log.i(TAG, "changed key/value: " + key+"/"+value);
                 }
+/*
                 if(key==pref.PREF_MQTT_HOST){
                     sharedPreferences.edit().putString(pref.PREF_MQTT_HOST, sharedPreferences.getString(preference.getKey(), "192.168.0.40"));
                 }else if(key==pref.PREF_MQTT_INTERVAL){
@@ -118,8 +147,8 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 sharedPreferences.edit().apply();
 */
-                MySharedPreferences mySharedPreferences=new MySharedPreferences(getContext());
-                MainActivity.getInstance().updateUI("onSharedPreferenceChanged: " + mySharedPreferences.toString());
+//                MySharedPreferences mySharedPreferences=new MySharedPreferences(getContext());
+//                MainActivity.getInstance().updateUI("onSharedPreferenceChanged: " + mySharedPreferences.toString());
             }
         }
 
@@ -127,6 +156,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onDetach() {
             super.onDetach();
             //Do your process here!
+
             MainActivity.getInstance().startWorker(getContext());
         }
 

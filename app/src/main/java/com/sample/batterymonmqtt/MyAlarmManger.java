@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -22,7 +23,8 @@ public class MyAlarmManger {
         if(alarmManager==null)
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         intentAlarmReceiver=new Intent(context, MyAlarmReceiver.class);
-        intentAlarmReceiver.setAction(pref.ACTION_ALARM);
+        intentAlarmReceiver.setAction(pref.ACTION_ALARM); // https://visdap.blogspot.com/2019/04/android-notifications-triggered-by.html
+        intentAlarmReceiver.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intentAlarmReceiver, 0);
     }
 
@@ -32,11 +34,13 @@ public class MyAlarmManger {
         Log.d(TAG, "scheduleWakeup:AlarmManager canceling Alarm and PendingIntent");
         alarmManager.cancel(alarmIntent);
         alarmIntent.cancel();
-        //long minutesFromNow = System.currentTimeMillis() + 60 * 1000*interval; //use, if you trust the clock will not change
-        //works for time since boot only:
-        long minutesFromNow =  SystemClock.elapsedRealtime() + 60 * 1000 * interval;
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, minutesFromNow, alarmIntent);
-        //alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, interval*60*1000, alarmIntent); //will set the alarm relative to the clock
+        registerAlarm(context, interval, alarmIntent);
+
+//        //long minutesFromNow = System.currentTimeMillis() + 60 * 1000*interval; //use, if you trust the clock will not change
+//        //works for time since boot only:
+//        long minutesFromNow =  SystemClock.elapsedRealtime() + 60 * 1000 * interval;
+//        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, minutesFromNow, alarmIntent);
+//        //alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, interval*60*1000, alarmIntent); //will set the alarm relative to the clock
         Log.d(TAG, "scheduleWakeup:AlarmManager setAlarm to start in " + interval+" minutes");
 /*        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
@@ -45,6 +49,7 @@ public class MyAlarmManger {
                 , alarmIntent);
 */
     }
+
     public void cancelAlarm()
     {
 //        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -56,5 +61,42 @@ public class MyAlarmManger {
             //alarmManager.cancel(alarmIntent);
         }
 
+    }
+
+    /**
+     * schedule an alarm
+     * see https://visdap.blogspot.com/2019/04/android-notifications-triggered-by.html
+     * @param context
+     * the context
+     * @param interval
+     * when to launch the AlarmReceiver in minutes
+     * @param intent
+     * existing PendingIntent to be used
+     */
+    public static void registerAlarm(Context context, long interval, PendingIntent intent){
+        final int FIVE_MINUTES_IN_MILLI = 300000;
+        final int THIRTY_SECOND_IN_MILLI = 30000;
+        long launchTime = System.currentTimeMillis() + (60*1000 * interval);
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        //Intent i = new Intent(context, MyAlarmReceiver.class);
+        PendingIntent pi = intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, launchTime, pi);
+        else
+            am.setExact(AlarmManager.RTC_WAKEUP, launchTime, pi);
+        Log.d(TAG, "registerAlarm for timestamp "+launchTime);
+    }
+
+    public static void registerAlarm(Context context){
+        final int FIVE_MINUTES_IN_MILLI = 300000;
+        final int THIRTY_SECOND_IN_MILLI = 30000;
+        long launchTime = System.currentTimeMillis() + FIVE_MINUTES_IN_MILLI;
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, MyAlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, launchTime, pi);
+        else am.setExact(AlarmManager.RTC_WAKEUP, launchTime, pi);
+        Log.d(TAG,"timestamp "+launchTime);
     }
 }

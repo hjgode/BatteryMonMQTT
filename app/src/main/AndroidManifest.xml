@@ -11,6 +11,7 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -63,7 +64,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".MyAlarmReceiver"
+        <receiver android:name="com.sample.batterymonmqtt.MyAlarmReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
@@ -71,7 +72,7 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".ForegroundService"
+            android:name="com.sample.batterymonmqtt.ForegroundService"
             android:enabled="true"
             android:exported="true">
 

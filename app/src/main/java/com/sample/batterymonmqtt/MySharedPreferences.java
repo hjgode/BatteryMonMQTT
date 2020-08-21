@@ -7,6 +7,9 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.sample.batterymonmqtt.MainActivity.TAG;
 
 public class MySharedPreferences {
@@ -20,6 +23,16 @@ public class MySharedPreferences {
     int mqttInterval=15;
     int mqttport=1883;
     boolean mqtt_enabled=true;
+
+    public static String dumpPrefs(SharedPreferences sharedPreferences){
+        StringBuilder stringBuilder=new StringBuilder();
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
+            stringBuilder.append(entry.getKey() + ": " + entry.getValue().toString());
+        }
+        return stringBuilder.toString();
+    }
 
     public MySharedPreferences(Context context){
         _context=context;

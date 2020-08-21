@@ -49,10 +49,10 @@ dependencies {
 //    implementation "com.hivemq:hivemq-mqtt-client:1.2.0"
 
     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0"
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+//    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+//    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation "androidx.core:core-ktx:+"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation group: 'com.hivemq', name: 'hivemq-mqtt-client', version: '1.2.1'
 
